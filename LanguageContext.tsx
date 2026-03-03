@@ -1,54 +1,69 @@
-
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { LanguageCode, Translations, translations } from '@/lib/translations';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+type Language = 'ar' | 'en' | 'fr' | 'zh';
 
 interface LanguageContextType {
-  language: LanguageCode;
-  setLanguage: (lang: LanguageCode) => void;
-  t: Translations;
-  isRTL: boolean;
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
 }
+
+const translations = {
+  ar: {
+    app_name: 'Smartry',
+    add_reminder: 'إضافة تذكير',
+    settings: 'الإعدادات',
+    language: 'اللغة',
+    dark_mode: 'الوضع الليلي',
+  },
+  en: {
+    app_name: 'Smartry',
+    add_reminder: 'Add Reminder',
+    settings: 'Settings',
+    language: 'Language',
+    dark_mode: 'Dark Mode',
+  },
+  fr: {
+    app_name: 'Smartry',
+    add_reminder: 'Ajouter un rappel',
+    settings: 'Paramètres',
+    language: 'Langue',
+    dark_mode: 'Mode sombre',
+  },
+  zh: {
+    app_name: 'Smartry',
+    add_reminder: '添加提醒',
+    settings: '设置',
+    language: '语言',
+    dark_mode: '夜间模式',
+  },
+};
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<LanguageCode>(() => {
-    if (typeof window !== 'undefined') {
-      const savedLanguage = localStorage.getItem('app_language') as LanguageCode;
-      if (savedLanguage && translations[savedLanguage]) {
-        return savedLanguage;
-      }
-      const browserLang = navigator.language.split('-')[0] as LanguageCode;
-      if (translations[browserLang]) {
-        return browserLang;
-      }
-    }
-    return 'ar';
-  });
+export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  const [language, setLanguage] = useState<Language>('ar');
 
   useEffect(() => {
-    // Update document direction and lang attribute
-    const isRTL = language === 'ar';
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    document.documentElement.lang = language;
-  }, [language]);
+    const saved = localStorage.getItem('language') as Language;
+    if (saved && ['ar', 'en', 'fr', 'zh'].includes(saved)) {
+      setLanguage(saved);
+    }
+  }, []);
 
-  const setLanguage = (lang: LanguageCode) => {
-    setLanguageState(lang);
-    localStorage.setItem('app_language', lang);
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang);
+    localStorage.setItem('language', lang);
   };
 
-  const value = {
-    language,
-    setLanguage,
-    t: translations[language],
-    isRTL: language === 'ar'
+  const t = (key: string): string => {
+    return translations[language][key as keyof typeof translations[typeof language]] || key;
   };
 
   return (
-    <LanguageContext.Provider value={value}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -56,7 +71,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
