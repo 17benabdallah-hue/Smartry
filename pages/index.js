@@ -1,5 +1,10 @@
-import ReminderApp from '../components/ReminderApp';
+import { SettingsScreen } from '../components/SettingsScreen';
 
 export default function Home() {
-  return <ReminderApp />;
+  return (
+    <SettingsScreen
+      onBack={() => {}}
+      onNavigateToLanguage={() => alert('سيتم إضافة شاشة اختيار اللغة قريباً')}
+    />
+  );
 }
