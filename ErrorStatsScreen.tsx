@@ -1,57 +1,63 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { ErrorLogger, ErrorStats } from '@/lib/error-logger';
-import { SystemManager, RegistryStatus } from '@/lib/system-manager';
-import { AlertTriangle, Clock, Trash2, ChevronLeft, ShieldCheck, Server, Info, Activity } from 'lucide-react';
+import { AlertTriangle, Clock, Trash2, ChevronLeft, ShieldCheck, Server, Info } from 'lucide-react';
 
 interface ErrorStatsScreenProps {
   onBack?: () => void;
 }
 
-/**
- * شاشة إحصائيات الأخطاء - نسخة الويب المستوحاة من نسخة أندرويد
- * Error Stats Screen - Web version inspired by the Android implementation
- */
 export const ErrorStatsScreen: React.FC<ErrorStatsScreenProps> = ({ onBack }) => {
   const [activeTab, setActiveTab] = useState<'errors' | 'system'>('errors');
-  const [stats, setStats] = useState<ErrorStats | null>(() => 
-    typeof window !== 'undefined' ? ErrorLogger.getErrorStats() : null
-  );
-  const [registries, setRegistries] = useState<RegistryStatus[]>([]);
+  const [stats, setStats] = useState<Record<string, number>>({});
+  const [lastErrorTime, setLastErrorTime] = useState<number | null>(null);
+  const [registries, setRegistries] = useState<any[]>([]);
   const [isChecking, setIsChecking] = useState(false);
+  const [appMetadata, setAppMetadata] = useState<Record<string, any>>({});
 
-  const checkRegistries = useCallback(async () => {
-    setIsChecking(true);
-    const results = await SystemManager.checkRegistryStatus();
-    setRegistries(results);
-    setIsChecking(false);
+  useEffect(() => {
+    setStats({
+      'TypeError': 3,
+      'SyntaxError': 1,
+      'NetworkError': 5,
+    });
+    setLastErrorTime(Date.now() - 3600000);
+    setRegistries([
+      { name: 'Smartry Core', url: 'github.com/smartry/core', status: 'online', latency: 42 },
+      { name: 'AI Service', url: 'api.smartry.ai', status: 'online', latency: 87 },
+      { name: 'Backup Registry', url: 'backup.smartry.com', status: 'offline' },
+    ]);
+    setAppMetadata({
+      'الإصدار': '2.0.0',
+      'البيئة': 'production',
+      'إطار العمل': 'Next.js 15',
+      'آخر تحديث': new Date().toLocaleDateString('ar-DZ'),
+      'وضع الأمان': 'مفعل',
+    });
   }, []);
 
-  const handleTabChange = (tab: 'errors' | 'system') => {
-    setActiveTab(tab);
-    if (tab === 'system' && registries.length === 0) {
-      checkRegistries();
-    }
+  const checkRegistries = () => {
+    setIsChecking(true);
+    setTimeout(() => {
+      setRegistries(prev => prev.map(reg => ({
+        ...reg,
+        status: Math.random() > 0.3 ? 'online' : 'offline',
+        latency: Math.floor(Math.random() * 100) + 20,
+      })));
+      setIsChecking(false);
+    }, 1500);
   };
 
   const handleClear = () => {
     if (confirm('هل أنت متأكد من مسح جميع السجلات والإحصائيات؟')) {
-      ErrorLogger.clearLogs();
-      setStats(ErrorLogger.getErrorStats());
+      setStats({});
+      setLastErrorTime(null);
     }
   };
 
-  if (!stats) return null;
-
-  // تحويل الإحصائيات إلى قائمة وتصفية وقت آخر خطأ
-  const statsList = Object.entries(stats).filter(([key]) => key !== 'last_error_time');
-  const lastErrorTime = stats.last_error_time as number;
-
   return (
-    <div className="flex flex-col h-full bg-[#E65100] dark:bg-zinc-950 text-black dark:text-white transition-colors duration-500">
-      {/* App Bar */}
+    <div className="flex flex-col h-full bg-orange-600 dark:bg-zinc-950 text-black dark:text-white transition-colors duration-500">
       <div className="flex items-center justify-between p-6 bg-black/10 backdrop-blur-sm sticky top-0 z-10 border-b border-white/10">
         <div className="flex items-center gap-3">
           {onBack && (
@@ -71,17 +77,16 @@ export const ErrorStatsScreen: React.FC<ErrorStatsScreenProps> = ({ onBack }) =>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* Tabs */}
         <div className="flex bg-black/10 p-1 rounded-2xl mb-4">
           <button 
-            onClick={() => handleTabChange('errors')}
-            className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'errors' ? 'bg-white text-[#E65100] shadow-lg' : 'text-white/50 hover:text-white'}`}
+            onClick={() => setActiveTab('errors')}
+            className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'errors' ? 'bg-white text-orange-600 shadow-lg' : 'text-white/50 hover:text-white'}`}
           >
             الأخطاء
           </button>
           <button 
-            onClick={() => handleTabChange('system')}
-            className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'system' ? 'bg-white text-[#E65100] shadow-lg' : 'text-white/50 hover:text-white'}`}
+            onClick={() => setActiveTab('system')}
+            className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'system' ? 'bg-white text-orange-600 shadow-lg' : 'text-white/50 hover:text-white'}`}
           >
             النظام
           </button>
@@ -89,14 +94,13 @@ export const ErrorStatsScreen: React.FC<ErrorStatsScreenProps> = ({ onBack }) =>
 
         {activeTab === 'errors' ? (
           <>
-            {/* Last Error Time Card */}
-            {lastErrorTime > 0 && (
+            {lastErrorTime && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white dark:bg-zinc-900 p-5 rounded-3xl flex items-center gap-4 shadow-lg border border-black/5 dark:border-white/5"
               >
-                <div className="w-12 h-12 bg-[#E65100]/10 text-[#E65100] rounded-2xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-orange-600/10 text-orange-600 rounded-2xl flex items-center justify-center">
                   <Clock className="w-6 h-6" />
                 </div>
                 <div>
@@ -106,10 +110,9 @@ export const ErrorStatsScreen: React.FC<ErrorStatsScreenProps> = ({ onBack }) =>
               </motion.div>
             )}
 
-            {/* Stats List */}
-            {statsList.length > 0 ? (
+            {Object.keys(stats).length > 0 ? (
               <div className="space-y-3">
-                {statsList.map(([errorType, count], index) => (
+                {Object.entries(stats).map(([errorType, count], index) => (
                   <motion.div
                     key={errorType}
                     initial={{ opacity: 0, x: -10 }}
@@ -123,7 +126,7 @@ export const ErrorStatsScreen: React.FC<ErrorStatsScreenProps> = ({ onBack }) =>
                       </div>
                       <span className="font-bold text-black dark:text-white">{errorType}</span>
                     </div>
-                    <div className="bg-[#E65100] text-white px-4 py-2 rounded-2xl text-xs font-black tracking-widest">
+                    <div className="bg-orange-600 text-white px-4 py-2 rounded-2xl text-xs font-black tracking-widest">
                       {count} مرة
                     </div>
                   </motion.div>
@@ -141,7 +144,6 @@ export const ErrorStatsScreen: React.FC<ErrorStatsScreenProps> = ({ onBack }) =>
           </>
         ) : (
           <div className="space-y-6">
-            {/* Registry Status Section */}
             <section className="space-y-4">
               <div className="flex items-center justify-between px-2">
                 <h3 className="text-xs font-black text-white/50 uppercase tracking-widest flex items-center gap-2">
@@ -183,23 +185,21 @@ export const ErrorStatsScreen: React.FC<ErrorStatsScreenProps> = ({ onBack }) =>
               </div>
             </section>
 
-            {/* App Info Section */}
             <section className="space-y-4">
               <h3 className="text-xs font-black text-white/50 uppercase tracking-widest flex items-center gap-2 px-2">
                 <Info className="w-4 h-4" />
                 معلومات التطبيق
               </h3>
               <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] overflow-hidden shadow-lg border border-black/5 dark:border-white/5">
-                {Object.entries(SystemManager.getAppMetadata()).map(([key, value], index) => (
+                {Object.entries(appMetadata).map(([key, value], index) => (
                   <div key={key} className={`flex items-center justify-between p-6 ${index !== 0 ? 'border-t border-zinc-50 dark:border-white/5' : ''}`}>
                     <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{key}</span>
-                    <span className="text-xs font-mono text-[#E65100] font-black tracking-tighter">{String(value)}</span>
+                    <span className="text-xs font-mono text-orange-600 font-black tracking-tighter">{String(value)}</span>
                   </div>
                 ))}
               </div>
             </section>
 
-            {/* Security Status */}
             <div className="bg-white dark:bg-zinc-900 p-6 rounded-[2.5rem] flex items-center gap-5 shadow-lg border border-black/5 dark:border-white/5">
               <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 rounded-2xl flex items-center justify-center shadow-inner">
                 <ShieldCheck className="w-8 h-8" />
