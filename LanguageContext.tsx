@@ -18,6 +18,10 @@ const translations = {
     settings: 'الإعدادات',
     language: 'اللغة',
     dark_mode: 'الوضع الليلي',
+    about: 'عن التطبيق',
+    version: 'الإصدار',
+    developed_by: 'تطوير: عبدالله بن عبدالله',
+    in_collaboration_with: 'بالتعاون مع DeepSeek AI و Gemini',
   },
   en: {
     app_name: 'Smart Secretary',
@@ -25,6 +29,10 @@ const translations = {
     settings: 'Settings',
     language: 'Language',
     dark_mode: 'Dark Mode',
+    about: 'About',
+    version: 'Version',
+    developed_by: 'Developed by: Abdellah Benabdellah',
+    in_collaboration_with: 'In collaboration with DeepSeek AI & Gemini',
   },
   fr: {
     app_name: 'Secrétaire Intelligent',
@@ -32,6 +40,10 @@ const translations = {
     settings: 'Paramètres',
     language: 'Langue',
     dark_mode: 'Mode sombre',
+    about: 'À propos',
+    version: 'Version',
+    developed_by: 'Développé par: Abdellah Benabdellah',
+    in_collaboration_with: 'En collaboration avec DeepSeek AI et Gemini',
   },
   zh: {
     app_name: '智能秘书',
@@ -39,6 +51,10 @@ const translations = {
     settings: '设置',
     language: '语言',
     dark_mode: '夜间模式',
+    about: '关于',
+    version: '版本',
+    developed_by: '开发者: Abdellah Benabdellah',
+    in_collaboration_with: '与DeepSeek AI和Gemini合作',
   },
 };
 
