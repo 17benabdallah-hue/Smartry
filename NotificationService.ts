@@ -1,7 +1,6 @@
 'use client';
 
-import { Reminder, EventType } from '@/lib/reminder-utils';
-import { translations, LanguageCode } from '@/lib/translations';
+import { Reminder } from './reminder-utils'; // تأكد من وجود هذا الملف أو قم بإنشائه لاحقاً
 
 class NotificationService {
   private timers: Map<string, NodeJS.Timeout[]> = new Map();
@@ -24,13 +23,11 @@ class NotificationService {
   scheduleReminder(reminder: Reminder, onComplete: (id: string) => void) {
     if (reminder.isCompleted) return;
 
-    // Cancel existing timers if any
     this.cancelReminder(reminder.id);
 
     const now = Date.now();
     const reminderTimers: NodeJS.Timeout[] = [];
 
-    // Schedule all alert times
     reminder.reminderTimes.forEach((timeStr) => {
       const triggerTime = new Date(timeStr).getTime();
       const delay = triggerTime - now;
@@ -40,7 +37,6 @@ class NotificationService {
           this.showNotification(reminder);
           onComplete(reminder.id);
           
-          // Remove this specific timer from the list
           const currentTimers = this.timers.get(reminder.id) || [];
           const updatedTimers = currentTimers.filter(t => t !== timer);
           if (updatedTimers.length === 0) {
@@ -67,15 +63,13 @@ class NotificationService {
   }
 
   private showNotification(reminder: Reminder) {
-    const lang = (typeof document !== 'undefined' ? document.documentElement.lang : 'ar') as LanguageCode;
-    const t = translations[lang] || translations.ar;
-    const title = '📋 ' + t.app_name;
+    const title = '📋 Smartry';
     const body = reminder.suggestedMessage || reminder.text;
 
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
       const notification = new Notification(title, {
         body: body,
-        icon: '/favicon.ico', // Fallback icon
+        icon: '/favicon.ico',
         tag: `reminder-${reminder.id}`,
         requireInteraction: true,
       });
@@ -85,13 +79,11 @@ class NotificationService {
         notification.close();
       };
     } else {
-      // Fallback to alert if notifications are not supported or granted
       alert(`تذكير: ${reminder.text}`);
     }
   }
 
   rescheduleAll(reminders: Reminder[], onComplete: (id: string) => void) {
-    // Clear all existing timers first
     this.timers.forEach((timers) => timers.forEach(timer => clearTimeout(timer)));
     this.timers.clear();
 
