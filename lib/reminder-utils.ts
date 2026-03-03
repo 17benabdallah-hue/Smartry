@@ -8,7 +8,7 @@ export interface Reminder {
   text: string;
   eventType: EventType;
   eventTime: Date;
-  reminderTimes: string[]; // مصفوفة من التواريخ بصيغة ISO string
+  reminderTimes: string[];
   location?: string;
   confidence: number;
   suggestedMessage: string;
@@ -18,9 +18,6 @@ export interface Reminder {
   totalDurationMinutes?: number;
 }
 
-/**
- * دوال مساعدة للتعامل مع التذكيرات
- */
 export function formatReminderTime(date: Date): string {
   return new Intl.DateTimeFormat('ar-DZ', {
     hour: '2-digit',
