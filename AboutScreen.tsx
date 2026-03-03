@@ -18,7 +18,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ onBack }) => {
         <button onClick={onBack} className="p-2 hover:bg-white/10 rounded-full transition-colors text-white">
           {isRTL ? <ChevronLeft className="w-6 h-6 rotate-180" /> : <ChevronLeft className="w-6 h-6" />}
         </button>
-        <h1 className="text-2xl font-black tracking-tight text-white">{t.about}</h1>
+        <h1 className="text-2xl font-black tracking-tight text-white">{t('about')}</h1>
       </div>
 
       <div className="flex-1 flex flex-col items-center p-6 pt-16">
