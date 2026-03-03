@@ -27,16 +27,16 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ onBack }) => {
         </div>
         
         <h2 className="text-4xl font-black mb-2 text-white tracking-tight">{t('app_name')}</h2>
-         <p className="text-white/70 font-bold mb-12 tracking-widest uppercase text-sm">{t('version')} 2.0</p>
+        <p className="text-white/70 font-bold mb-12 tracking-widest uppercase text-sm">{t('version')} 2.0</p>
         
         <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 w-full max-w-md shadow-xl border border-black/5 dark:border-white/5 mb-8 text-center">
-          <p className="font-black text-xl mb-3 text-black dark:text-white">تطوير: عبدالله بن عبدالله</p>
-          <p className="text-zinc-500 dark:text-zinc-400 font-bold text-sm">بالتعاون مع DeepSeek AI و Gemini</p>
+          <p className="font-black text-xl mb-3 text-black dark:text-white">{t('developed_by')}</p>
+          <p className="text-zinc-500 dark:text-zinc-400 font-bold text-sm">{t('in_collaboration_with')}</p>
         </div>
         
         <div className="flex gap-4 w-full max-w-md">
           <a 
-            href="https://github.com" 
+            href="https://github.com/17benabdallah-hue" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex-1 flex items-center justify-center gap-3 bg-zinc-900 dark:bg-white text-white dark:text-black py-4 rounded-2xl font-black hover:scale-[1.02] transition-transform shadow-lg"
@@ -45,7 +45,7 @@ export const AboutScreen: React.FC<AboutScreenProps> = ({ onBack }) => {
             GitHub
           </a>
           <a 
-            href="https://t.me" 
+            href="https://t.me/smartry_app" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex-1 flex items-center justify-center gap-3 bg-[#0088cc] text-white py-4 rounded-2xl font-black hover:scale-[1.02] transition-transform shadow-lg"
