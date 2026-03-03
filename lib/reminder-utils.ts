@@ -1,13 +1,6 @@
 // lib/reminder-utils.ts
 
-export type EventType = 
-  | 'food' 
-  | 'medicine' 
-  | 'flight' 
-  | 'meeting' 
-  | 'school' 
-  | 'other';
-
+export type EventType = 'food' | 'medicine' | 'flight' | 'meeting' | 'school' | 'other';
 export type ReminderStage = 'warning' | 'final';
 
 export interface Reminder {
