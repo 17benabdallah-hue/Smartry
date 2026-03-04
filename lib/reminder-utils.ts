@@ -23,6 +23,29 @@ export interface Reminder {
   isCompleted: boolean;
   stage: ReminderStage;
   totalDurationMinutes?: number;
+}// أضف هذه الدالة في نهاية الملف (بعد getTimeRemaining وقبل أي export آخر إن وجد)
+
+export function parseReminderText(text: string): { type: EventType; confidence: number; durationMinutes?: number } {
+  const lowerText = text.toLowerCase();
+  
+  // فحص الكلمات المفتاحية لكل نوع
+  if (foodKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
+    return { type: 'food', confidence: 0.8, durationMinutes: 25 };
+  }
+  if (medicineKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
+    return { type: 'medicine', confidence: 0.8, durationMinutes: 30 };
+  }
+  if (travelKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
+    return { type: 'flight', confidence: 0.7, durationMinutes: 120 };
+  }
+  if (meetingKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
+    return { type: 'meeting', confidence: 0.7, durationMinutes: 60 };
+  }
+  if (schoolKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
+    return { type: 'school', confidence: 0.7, durationMinutes: 240 };
+  }
+  
+  return { type: 'other', confidence: 0.3, durationMinutes: 15 };
 }
 
 export function formatReminderTime(date: Date): string {
