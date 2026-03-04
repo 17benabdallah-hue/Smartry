@@ -29,7 +29,7 @@ import {
   parseSmartTime, 
   getPriorityLabel, 
   getPriorityColor,
-  ReminderStage
+import { Reminder, ReminderStage, getPriorityLabel, getPriorityColor } from '@/lib/reminder-utils';
 } from '@/lib/reminder-utils';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
