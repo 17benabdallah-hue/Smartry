@@ -3,6 +3,13 @@
 export type EventType = 'food' | 'medicine' | 'flight' | 'meeting' | 'school' | 'other';
 export type ReminderStage = 'warning' | 'final';
 
+// مصفوفات الكلمات المفتاحية (أضفها هنا)
+const foodKeywords = ['حليب', 'طعام', 'فرن', 'نار', 'milk', 'food', 'oven', 'stove'];
+const medicineKeywords = ['دواء', 'علاج', 'medicine', 'pill', 'medication'];
+const travelKeywords = ['رحلة', 'سفر', 'trip', 'travel', 'flight'];
+const meetingKeywords = ['اجتماع', 'موعد', 'meeting', 'appointment'];
+const schoolKeywords = ['مدرسة', 'ابن', 'school', 'child'];
+
 export interface Reminder {
   id: string;
   text: string;
