@@ -1,45 +1,83 @@
-// lib/reminder-utils.ts
+'use client';
 
-export type EventType = 'food' | 'medicine' | 'flight' | 'meeting' | 'school' | 'other';
-export type ReminderStage = 'warning' | 'final';
-export type Priority = 1 | 2 | 3 | 4;
-
-export interface Reminder {
+// تعريف مبسط لنوع التذكير (يمكن تحسينه لاحقًا)
+interface Reminder {
   id: string;
-  text: string;
-  eventType: EventType;
-  eventTime: string;
-  reminderTime: string;
-  reminderTimes: string[];
-  location?: string;
-  confidence: number;
-  suggestedMessage: string;
-  createdAt: string;
+  reminderTimes?: string[];
+  reminderTime?: string;
   isCompleted: boolean;
-  recurring?: 'none' | 'hourly' | 'daily' | 'weekly';
-  priority: Priority;
-  snoozeCount: number;
-  maxSnooze: number;
-  stage: ReminderStage;
-  totalDurationMinutes?: number;
-  parentId?: string;
 }
 
-export const getPriorityLabel = (priority: Priority, language: string): string => {
-  const labels = {
-    ar: { 1: 'منخفضة', 2: 'متوسطة', 3: 'عالية', 4: 'عاجلة' },
-    en: { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Urgent' },
-    fr: { 1: 'Basse', 2: 'Moyenne', 3: 'Haute', 4: 'Urgente' },
-    zh: { 1: '低', 2: '中', 3: '高', 4: '紧急' },
-  };
-  return labels[language as keyof typeof labels]?.[priority] || String(priority);
-};
+class NotificationService {
+  private timers: Map<string, NodeJS.Timeout[]> = new Map();
 
-export const getPriorityColor = (priority: Priority): string => {
-  switch (priority) {
-    case 4: return 'bg-red-500 text-white';
-    case 3: return 'bg-orange-500 text-white';
-    case 2: return 'bg-yellow-500 text-white';
-    default: return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+  /**
+   * جدولة تذكير
+   */
+  scheduleReminder(reminder: Reminder, onDue: (id: string) => void) {
+    if (reminder.isCompleted) return;
+
+    // إلغاء أي مؤقتات سابقة
+    this.cancelReminder(reminder.id);
+
+    const now = Date.now();
+    // استخدام reminderTimes إذا وجدت، وإلا استخدم reminderTime
+    const times = reminder.reminderTimes && reminder.reminderTimes.length > 0
+      ? reminder.reminderTimes
+      : reminder.reminderTime ? [reminder.reminderTime] : [];
+
+    const timers: NodeJS.Timeout[] = [];
+
+    times.forEach((timeStr: string) => {
+      const triggerTime = new Date(timeStr).getTime();
+      const delay = triggerTime - now;
+
+      if (delay > 0) {
+        const timer = setTimeout(() => {
+          onDue(reminder.id);
+          // إزالة هذا المؤقت من القائمة بعد التنفيذ
+          const currentTimers = this.timers.get(reminder.id) || [];
+          const updated = currentTimers.filter(t => t !== timer);
+          if (updated.length === 0) {
+            this.timers.delete(reminder.id);
+          } else {
+            this.timers.set(reminder.id, updated);
+          }
+        }, delay);
+        timers.push(timer);
+      }
+    });
+
+    if (timers.length > 0) {
+      this.timers.set(reminder.id, timers);
+    }
   }
-};
+
+  /**
+   * إلغاء تذكير
+   */
+  cancelReminder(id: string) {
+    const timers = this.timers.get(id);
+    if (timers) {
+      timers.forEach(timer => clearTimeout(timer));
+      this.timers.delete(id);
+    }
+  }
+
+  /**
+   * إعادة جدولة جميع التذكيرات
+   */
+  rescheduleAll(reminders: Reminder[], onDue: (id: string) => void) {
+    // مسح جميع المؤقتات القديمة
+    this.timers.forEach(timers => timers.forEach(timer => clearTimeout(timer)));
+    this.timers.clear();
+
+    // جدولة كل تذكير نشط
+    reminders.forEach(reminder => {
+      this.scheduleReminder(reminder, onDue);
+    });
+  }
+}
+
+// تصدير كائن واحد من الخدمة (نمط المفرد)
+export const notificationService = new NotificationService();
