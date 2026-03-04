@@ -2,71 +2,44 @@
 
 export type EventType = 'food' | 'medicine' | 'flight' | 'meeting' | 'school' | 'other';
 export type ReminderStage = 'warning' | 'final';
-
-// مصفوفات الكلمات المفتاحية (أضفها هنا)
-const foodKeywords = ['حليب', 'طعام', 'فرن', 'نار', 'milk', 'food', 'oven', 'stove'];
-const medicineKeywords = ['دواء', 'علاج', 'medicine', 'pill', 'medication'];
-const travelKeywords = ['رحلة', 'سفر', 'trip', 'travel', 'flight'];
-const meetingKeywords = ['اجتماع', 'موعد', 'meeting', 'appointment'];
-const schoolKeywords = ['مدرسة', 'ابن', 'school', 'child'];
+export type Priority = 1 | 2 | 3 | 4;
 
 export interface Reminder {
   id: string;
   text: string;
   eventType: EventType;
-  eventTime: Date;
+  eventTime: string;
+  reminderTime: string;
   reminderTimes: string[];
   location?: string;
   confidence: number;
   suggestedMessage: string;
-  createdAt: Date;
+  createdAt: string;
   isCompleted: boolean;
+  recurring?: 'none' | 'hourly' | 'daily' | 'weekly';
+  priority: Priority;
+  snoozeCount: number;
+  maxSnooze: number;
   stage: ReminderStage;
   totalDurationMinutes?: number;
-}// أضف هذه الدالة في نهاية الملف (بعد getTimeRemaining وقبل أي export آخر إن وجد)
-
-export function parseReminderText(text: string): { type: EventType; confidence: number; durationMinutes?: number } {
-  const lowerText = text.toLowerCase();
-  
-  // فحص الكلمات المفتاحية لكل نوع
-  if (foodKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
-    return { type: 'food', confidence: 0.8, durationMinutes: 25 };
-  }
-  if (medicineKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
-    return { type: 'medicine', confidence: 0.8, durationMinutes: 30 };
-  }
-  if (travelKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
-    return { type: 'flight', confidence: 0.7, durationMinutes: 120 };
-  }
-  if (meetingKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
-    return { type: 'meeting', confidence: 0.7, durationMinutes: 60 };
-  }
-  if (schoolKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()))) {
-    return { type: 'school', confidence: 0.7, durationMinutes: 240 };
-  }
-  
-  return { type: 'other', confidence: 0.3, durationMinutes: 15 };
+  parentId?: string;
 }
 
-export function formatReminderTime(date: Date): string {
-  return new Intl.DateTimeFormat('ar-DZ', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  }).format(date);
-}
+export const getPriorityLabel = (priority: Priority, language: string): string => {
+  const labels = {
+    ar: { 1: 'منخفضة', 2: 'متوسطة', 3: 'عالية', 4: 'عاجلة' },
+    en: { 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Urgent' },
+    fr: { 1: 'Basse', 2: 'Moyenne', 3: 'Haute', 4: 'Urgente' },
+    zh: { 1: '低', 2: '中', 3: '高', 4: '紧急' },
+  };
+  return labels[language as keyof typeof labels]?.[priority] || String(priority);
+};
 
-export function getTimeRemaining(reminderTime: Date): string {
-  const now = new Date();
-  const diff = reminderTime.getTime() - now.getTime();
-  
-  if (diff <= 0) return 'مستحق الآن';
-  
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  
-  if (days > 0) return `بعد ${days} يوم`;
-  if (hours > 0) return `بعد ${hours} ساعة`;
-  return `بعد ${minutes} دقيقة`;
-}
+export const getPriorityColor = (priority: Priority): string => {
+  switch (priority) {
+    case 4: return 'bg-red-500 text-white';
+    case 3: return 'bg-orange-500 text-white';
+    case 2: return 'bg-yellow-500 text-white';
+    default: return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+  }
+};
