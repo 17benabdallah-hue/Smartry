@@ -24,15 +24,13 @@ import {
 } from 'lucide-react';
 import { format, formatDistanceToNow, isPast, parseISO, addMinutes } from 'date-fns';
 import { arDZ } from 'date-fns/locale';
-import { 
-  import { Reminder, ReminderStage, parseSmartTime, getPriorityLabel, getPriorityColor } from '@/lib/reminder-utils';,
-import { Reminder, ReminderStage, getPriorityLabel, getPriorityColor } from '@/lib/reminder-utils';
-} from '@/lib/reminder-utils';
+import { Reminder, ReminderStage, parseSmartTime, getPriorityLabel, getPriorityColor } from '@/lib/reminder-utils';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { SettingsScreen } from './SettingsScreen';
 import { AboutScreen } from './AboutScreen';
 import { notificationService } from './NotificationService';
+import { useLanguage } from '../lib/LanguageContext';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -43,8 +41,6 @@ const SMART_SUGGESTIONS: Record<string, string[]> = {
   "اجتماع": ["اجتماع العمل الساعة 10", "تحضير عرض الاجتماع", "تأكيد الاجتماع"],
   "دواء": ["تناول الدواء", "شراء الدواء من الصيدلية", "موعد الدواء"]
 };
-
-import { useLanguage } from '../lib/LanguageContext';
 
 export default function ReminderApp() {
   const [reminders, setReminders] = useState<Reminder[]>([]);
@@ -979,4 +975,4 @@ export default function ReminderApp() {
       </footer>
     </div>
   );
-}
+        }
