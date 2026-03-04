@@ -25,10 +25,7 @@ import {
 import { format, formatDistanceToNow, isPast, parseISO, addMinutes } from 'date-fns';
 import { arDZ } from 'date-fns/locale';
 import { 
-  Reminder, 
-  parseSmartTime, 
-  getPriorityLabel, 
-  getPriorityColor,
+  import { Reminder, ReminderStage, parseSmartTime, getPriorityLabel, getPriorityColor } from '@/lib/reminder-utils';,
 import { Reminder, ReminderStage, getPriorityLabel, getPriorityColor } from '@/lib/reminder-utils';
 } from '@/lib/reminder-utils';
 import { clsx, type ClassValue } from 'clsx';
