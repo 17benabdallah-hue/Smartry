@@ -67,8 +67,15 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               <p className="font-bold text-black dark:text-white">{t('dark_mode')}</p>
             </div>
             <button
-              className="px-4 py-2 bg-orange-600 text-white rounded-xl text-sm font-black"
-              onClick={() => alert('قيد التطوير')}
+              <button
+  className="px-4 py-2 bg-orange-600 text-white rounded-xl text-sm font-black"
+  onClick={() => {
+    // سنضيف هنا منطق تغيير الوضع لاحقاً
+    alert('الوضع الليلي: قيد التطوير');
+  }}
+>
+  {t('activate') || 'تفعيل'}
+</button>
             >
               {t('activate') || 'تفعيل'}
             </button>
