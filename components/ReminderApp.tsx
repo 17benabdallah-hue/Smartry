@@ -47,7 +47,7 @@ const SMART_SUGGESTIONS: Record<string, string[]> = {
   "دواء": ["تناول الدواء", "شراء الدواء من الصيدلية", "موعد الدواء"]
 };
 
-import { useLanguage } from './LanguageContext';
+import { useLanguage } from '../lib/LanguageContext';
 
 export default function ReminderApp() {
   const [reminders, setReminders] = useState<Reminder[]>([]);
