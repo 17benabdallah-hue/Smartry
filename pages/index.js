@@ -1,13 +1,18 @@
 import { useState } from 'react';
-import SettingsScreen from '../components/SettingsScreen';
-import LanguageScreen from '../components/LanguageScreen';
+import { SettingsScreen } from '../components/SettingsScreen';
+import { LanguageScreen } from '../components/LanguageScreen';
 import ReminderApp from '../components/ReminderApp';
 
 export default function Home() {
   const [screen, setScreen] = useState('reminder');
 
   if (screen === 'settings') {
-    return <SettingsScreen onBack={() => setScreen('reminder')} onNavigateToLanguage={() => setScreen('language')} />;
+    return (
+      <SettingsScreen
+        onBack={() => setScreen('reminder')}
+        onNavigateToLanguage={() => setScreen('language')}
+      />
+    );
   }
 
   if (screen === 'language') {
