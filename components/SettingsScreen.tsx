@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, Globe, Moon } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
 
@@ -14,6 +14,22 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   onNavigateToLanguage,
 }) => {
   const { t, isRTL } = useLanguage();
+  
+  // حالة الوضع الليلي (محلية)
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // تطبيق أو إزالة الوضع الليلي على عنصر html
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   return (
     <div className="flex flex-col h-full min-h-screen bg-orange-600 dark:bg-zinc-950 text-black dark:text-white transition-colors duration-500">
@@ -67,17 +83,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
               <p className="font-bold text-black dark:text-white">{t('dark_mode')}</p>
             </div>
             <button
-              <button
-  className="px-4 py-2 bg-orange-600 text-white rounded-xl text-sm font-black"
-  onClick={() => {
-    // سنضيف هنا منطق تغيير الوضع لاحقاً
-    alert('الوضع الليلي: قيد التطوير');
-  }}
->
-  {t('activate') || 'تفعيل'}
-</button>
+              onClick={toggleDarkMode}
+              className={`px-4 py-2 rounded-xl text-sm font-black transition-colors ${
+                isDarkMode 
+                  ? 'bg-zinc-700 text-white' 
+                  : 'bg-orange-600 text-white'
+              }`}
             >
-              {t('activate') || 'تفعيل'}
+              {isDarkMode ? 'تعطيل' : 'تفعيل'}
             </button>
           </div>
         </div>
