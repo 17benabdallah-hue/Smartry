@@ -7,8 +7,8 @@ import {
   Plus, Trash2, Edit3, Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { auth, signIn, signOut, db } from './firebase';
-import { onAuthStateChanged, User } from 'firebase/auth';
+//import { auth, signIn, signOut, db } from './firebase';
+//import { onAuthStateChanged, User } from 'firebase/auth';
 import { 
   collection, addDoc, query, where, orderBy, 
   onSnapshot, serverTimestamp, Timestamp,
@@ -86,15 +86,18 @@ function App() {
   // --- Auth & Data ---
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setIsAuthReady(true);
-    });
-    return unsubscribe;
-  }, []);
+  // تعطيل المصادقة الحقيقية مؤقتًا واستخدام مستخدم وهمي
+  const guestUser = {
+    uid: 'guest-123',
+    email: 'guest@example.com',
+    displayName: 'ضيف',
+  } as User;
+  setUser(guestUser);
+  setIsAuthReady(true);
+}, []);
 
   useEffect(() => {
-    if (!user) {
+    //if (!user) {
       setReminders([]);
       return;
     }
