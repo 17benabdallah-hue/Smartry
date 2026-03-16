@@ -86,12 +86,16 @@ function App() {
   // --- Auth & Data ---
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setIsAuthReady(true);
-    });
-    return unsubscribe;
-  }, []);
+  // مستخدم وهمي للتطوير
+  const guestUser = {
+    uid: 'guest-123',
+    email: 'guest@example.com',
+    displayName: 'ضيف',
+    // أضف أي خصائص أخرى يتوقعها التطبيق
+  };
+  setUser(guestUser as any); // استخدم as any إذا كان النوع صارمًا
+  setIsAuthReady(true);
+}, []);
 
   useEffect(() => {
     if (!user) {
