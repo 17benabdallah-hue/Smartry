@@ -7,8 +7,8 @@ import {
   Plus, Trash2, Edit3, Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-//import { auth, signIn, signOut, db } from './firebase';
-//import { onAuthStateChanged, User } from 'firebase/auth';
+import { db } from './firebase';
+import { db } from 'firebase/auth';
 import { 
   collection, addDoc, query, where, orderBy, 
   onSnapshot, serverTimestamp, Timestamp,
