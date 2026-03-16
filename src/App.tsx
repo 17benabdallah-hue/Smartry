@@ -96,12 +96,12 @@ function App() {
   setUser(guestUser as any); // استخدم as any إذا كان النوع صارمًا
   setIsAuthReady(true);
 }, []);
-
-    const q = query(
-      collection(db, 'reminders'),
-      where('userId', '==', user.uid),
-      orderBy('datetime', 'asc')
-    );
+  
+useEffect(() => {
+    if (!user) {
+      setReminders([]);
+      return;
+    }
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map(doc => ({
