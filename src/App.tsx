@@ -96,31 +96,29 @@ function App() {
   setIsAuthReady(true);
 }, []);
 
-  useEffect(() => {
-    //if (!user) {
-      setReminders([]);
-      return;
-    }
+useEffect(() => {
+  // الآن user موجود دائمًا (بفضل المستخدم الوهمي)، لكن نضيف هذا الشرط للسلامة
+  if (!user) return; // لن يحدث أبدًا، لكنه يمنع أخطاء TypeScript
 
-    const q = query(
-      collection(db, 'reminders'),
-      where('userId', '==', user.uid),
-      orderBy('datetime', 'asc')
-    );
+  const q = query(
+    collection(db, 'reminders'),
+    where('userId', '==', user.uid),
+    orderBy('datetime', 'asc')
+  );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Reminder[];
-      setReminders(data);
-    }, (err) => {
-      console.error("Firestore error:", err);
-      setError("Failed to load reminders.");
-    });
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Reminder[];
+    setReminders(data);
+  }, (err) => {
+    console.error("Firestore error:", err);
+    setError("Failed to load reminders.");
+  });
 
-    return unsubscribe;
-  }, [user]);
+  return unsubscribe;
+}, [user]);
 
   // --- Reminder Monitoring ---
 
