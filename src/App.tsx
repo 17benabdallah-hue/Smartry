@@ -97,12 +97,6 @@ function App() {
   setIsAuthReady(true);
 }, []);
 
-  useEffect(() => {
-    if (!user) {
-      setReminders([]);
-      return;
-    }
-
     const q = query(
       collection(db, 'reminders'),
       where('userId', '==', user.uid),
